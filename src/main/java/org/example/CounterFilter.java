@@ -22,15 +22,14 @@ public class CounterFilter implements Filter {
             throws IOException, ServletException {
 
         if (req instanceof HttpServletRequest) {
-            Long peek = null;
             if (null != ((HttpServletRequest) req).getHeader(_HEADER_CONC_PEEK_PRINT)) {
-                peek = PeekCounter.peek();
+                long peek = PeekCounter.peek();
                 System.out.println("### concurrency :: peek=" + peek);
+                if (res instanceof HttpServletResponse) {
+                    ((HttpServletResponse) res).setHeader(_HEADER_CONC_PEEK_RES, String.valueOf(peek));
+                    return;
+                }
             }
-            if (peek != null && res instanceof HttpServletResponse) {
-                ((HttpServletResponse) res).setHeader(_HEADER_CONC_PEEK_RES, String.valueOf(peek));
-            }
-            return;
         }
 
         try {
